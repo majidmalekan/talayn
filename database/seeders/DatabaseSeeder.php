@@ -2,8 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Commission;
+use App\Models\Setting;
 use App\Models\User;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Wallet;
+use App\Models\WalletExtension;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +18,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory(10)->create()->each(function ($user) {
+            $user->wallet()->save(Wallet::factory()->create()->each(function ($wallet){
+                $wallet->walletExtension()->save(WalletExtension::factory()->create());
+            }));
+        });
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        Commission::query()->insert([
+            ['from_gram' => 0, 'to_gram' => 1, 'percent' => 2],
+            ['from_gram' => 1, 'to_gram' => 10, 'percent' => 1.5],
+            ['from_gram' => 10, 'to_gram' => null, 'percent' => 1],
+        ]);
+
+        Setting::query()->insert([
+            ['key' => 'min_commission', 'value' => '50000'],
+            ['key' => 'max_commission', 'value' => '5000000'],
         ]);
     }
 }

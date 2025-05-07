@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\UserRoleEnum;
+use App\Traits\CacheRepositoryTrait;
 use App\Traits\DBTransactionLockedTrait;
 use App\Traits\TableInformationTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,7 +14,7 @@ use Illuminate\Http\Request;
 
 class BaseRepository implements BaseEloquentRepositoryInterface
 {
-    use TableInformationTrait, DBTransactionLockedTrait;
+    use TableInformationTrait, DBTransactionLockedTrait,CacheRepositoryTrait;
 
     /**
      * @var Model

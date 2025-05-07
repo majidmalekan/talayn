@@ -1,5 +1,7 @@
 <?php
 
+use App\Repositories\Commission\CommissionRepositoryInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Morilog\Jalali\CalendarUtils;
 
@@ -166,5 +168,23 @@ if (!function_exists('detectDeviceByMac')) {
 
         return $data[$prefix] ?? ['vendor' => 'Unknown', 'device' => 'Unknown'];
     }
+}
 
+if (!function_exists('calculateDynamicCommission')) {
+    /**
+     * @param $amountGram
+     * @param $totalPrice
+     * @return int
+     * @throws BindingResolutionException
+     */
+    function calculateDynamicCommission($amountGram, $totalPrice): int
+    {
+        $commissionRule = app()->make(CommissionRepositoryInterface::class)->firstByRule();
+        $percent = $commissionRule ? $commissionRule->percent : 0;
+        $commission = $totalPrice * ($percent / 100);
+        $min = app()->make(CommissionRepositoryInterface::class)->firstByKey('min_commission') ?? 50000;
+        $max = app()->make(CommissionRepositoryInterface::class)->firstByKey('max_commission') ?? 5000000;
+
+        return (int)round(max($min, min($commission, $max)));
+    }
 }
