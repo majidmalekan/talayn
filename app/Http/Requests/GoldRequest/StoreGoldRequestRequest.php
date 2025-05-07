@@ -4,6 +4,7 @@ namespace App\Http\Requests\GoldRequest;
 
 use App\Enums\GoldRequestTypeEnum;
 use App\Enums\StatusEnum;
+use App\Rules\EnsureUserHasEnoughGold;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -27,7 +28,7 @@ class StoreGoldRequestRequest extends FormRequest
     {
         return [
             'type'=>['required','string',new Enum(GoldRequestTypeEnum::class)],
-            'amount'=>['required'],
+            'amount'=>['required',new EnsureUserHasEnoughGold],
             'price_fee'=>['required'],
             'status'=>['sometimes','string',new Enum(StatusEnum::class)],
         ];

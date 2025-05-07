@@ -7,12 +7,14 @@ use App\Http\Requests\Trade\StoreTradeRequest;
 use App\Http\Requests\Trade\UpdateTradeRequest;
 use App\Models\GoldRequest;
 use App\Services\TradeService;
+use App\Traits\WalletTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TradeController extends Controller
 {
+    use WalletTrait;
     public function __construct(protected TradeService $tradeService)
     {
     }
@@ -32,53 +34,25 @@ class TradeController extends Controller
      */
     public function store(StoreTradeRequest $request)
     {
+
         try {
             $inputs = $request->validated();
-            DB::transaction(function () use ($request) {
-                $matchingBuyOrders = GoldRequest::query()->where('type', 'buy')
-                    ->where('price_per_gram', '>=', $sellOrder->price_per_gram)
-                    ->whereIn('status', ['open', 'partial'])
-                    ->orderBy('price_per_gram', 'desc')
-                    ->orderBy('created_at')
-                    ->lockForUpdate() // 🔐 جلوگیری از تغییر هم‌زمان توسط کاربران دیگر
-                    ->get();
-
-                $remainingToSell = $sellOrder->remaining_gram;
+            DB::transaction(function () use ($request,$inputs) {
                 $sellUser = $sellOrder->user()->lockForUpdate()->first(); // قفل روی کاربر فروشنده
-
-                foreach ($matchingBuyOrders as $buyOrder) {
-                    if ($remainingToSell <= 0) break;
-
                     $buyUser = $buyOrder->user()->lockForUpdate()->first(); // قفل روی کاربر خریدار
-
-                    $matchedAmount = min($buyOrder->remaining_gram, $remainingToSell);
-                    $totalPrice = $matchedAmount * $sellOrder->price_per_gram;
-
-                    $commission = calculateDynamicCommission($matchedAmount, $totalPrice);
-
-                    // بررسی موجودی خریدار
-                    if ($buyUser->balance_rial < ($totalPrice + $commission)) {
-                        continue;
-                    }
-
-                    // بروزرسانی کیف پول‌ها
-                    $buyUser->balance_rial -= ($totalPrice + $commission);
-                    $buyUser->balance_gram += $matchedAmount;
-
+                    $fullPrice = $inputs["amount"] * $sellOrder->price_per_gram;
+                    $commission = calculateDynamicCommission($inputs["amount"], $fullPrice);
+                    $UserDecrementBuyPrice= $fullPrice + $commission;
+                    $userIncrementSellPrice=$fullPrice - $commission;
+                    $this->decrementBalanceOfWallet($this->getWalletEntities($request->user()->id),$UserDecrementBuyPrice);
+                    $this->incrementBalanceByRelation(,$inputs["amount"]);
                     $sellUser->balance_rial += ($totalPrice - $commission);
+                    $this->incrementBalanceOfWallet(,$userIncrementSellPrice);
+                    $this->decrementBalanceByRelation();
                     $sellUser->balance_gram -= $matchedAmount;
-
                     $buyUser->save();
                     $sellUser->save();
-
-                    Trade::create([
-                        'buy_order_id' => $buyOrder->id,
-                        'sell_order_id' => $sellOrder->id,
-                        'amount_gram' => $matchedAmount,
-                        'price_per_gram' => $sellOrder->price_per_gram,
-                        'total_price' => $totalPrice,
-                        'commission' => $commission,
-                    ]);
+                    $this->tradeService->create($inputs);
 
                     $buyOrder->remaining_gram -= $matchedAmount;
                     $sellOrder->remaining_gram -= $matchedAmount;
@@ -88,9 +62,7 @@ class TradeController extends Controller
 
                     $buyOrder->save();
                     $sellOrder->save();
-
                     $remainingToSell = $sellOrder->remaining_gram;
-                }
             });
         }catch (\Exception $exception){
 
@@ -105,5 +77,11 @@ class TradeController extends Controller
     public function show(string $id): JsonResponse
     {
         return success('',$this->tradeService->show($id));
+    }
+
+    protected function getWalletEntities($userId)
+    {
+        $wallet=$this->getWalletByUserId($userId);
+
     }
 }

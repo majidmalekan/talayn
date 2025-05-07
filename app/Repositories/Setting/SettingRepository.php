@@ -18,6 +18,8 @@ class SettingRepository extends BaseRepository implements SettingRepositoryInter
      */
     public function firstByKey(string $key): mixed
     {
-       return $this->model->query()->where('key', $key)->value('value');
+       return $this->model->query()
+           ->where('key', $key)
+           ->value('value');
     }
 }

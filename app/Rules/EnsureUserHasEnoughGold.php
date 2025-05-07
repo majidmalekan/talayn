@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Enums\GoldRequestTypeEnum;
 use App\Models\Wallet;
 use App\Repositories\Wallet\WalletRepositoryInterface;
 use App\Traits\WalletTrait;
@@ -24,8 +25,9 @@ class EnsureUserHasEnoughGold implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($value < $this->getWalletByUserId(auth('sanctum')->user()->id)) {
-            $fail('مقدار طلای شما کمتر از میزان فروش شما می باشد.');
+        if (request()->post('type') == GoldRequestTypeEnum::SELL->value &&
+            $value < $this->getWalletByUserId(auth('sanctum')->user()->id)->gold_balance) {
+            $fail('مقدار طلای شما کمتر از میزان درخواستی شما برای  فروش می باشد.');
         }
     }
 }

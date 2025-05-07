@@ -11,7 +11,7 @@ class StoreTradeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreTradeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'sell_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
+            'buy_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
+            "amount" => ['required', 'integer', 'min:1'],
         ];
     }
 }

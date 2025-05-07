@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('amount',10,3);
             $table->float('price_fee');
             $table->float('total_price');
-            $table->foreignIdFor(Commission::class,'commission_id')->constrained()->cascadeOnDelete();
+            $table->float('commission');
             $table->enum('status',['pending','completed','cancelled'])->default('pending');
             $table->timestamps();
         });
