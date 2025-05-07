@@ -23,6 +23,7 @@ class StoreTradeRequest extends FormRequest
     {
         return [
             'sell_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
+            "seller_user_id" => ['required', 'integer', 'exists:users,id'],
             'buy_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
             "amount" => ['required', 'integer', 'min:1'],
         ];

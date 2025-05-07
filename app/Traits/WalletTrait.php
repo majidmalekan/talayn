@@ -68,7 +68,7 @@ trait WalletTrait
         if ($wallet) {
             return $wallet;
         }
-        $wallet = $this->getWalletByPhoneNumber($mixed,$type);
+        $wallet = $this->getWalletByPhoneNumber($mixed, $type);
         if ($wallet) {
             return $wallet;
         }
@@ -122,7 +122,8 @@ trait WalletTrait
      * @return int
      * @throws BindingResolutionException
      */
-    public function incrementBalanceByRelation(int $walletId, int|float $balance , string $type): int{
+    public function incrementBalanceByRelation(int $walletId, int|float $balance, string $type): int
+    {
         return app()
             ->make(WalletExtensionRepositoryInterface::class)
             ->incrementBalanceByRelation($walletId, $balance, $type);
@@ -136,7 +137,7 @@ trait WalletTrait
      * @return int
      * @throws BindingResolutionException
      */
-    public function decrementBalanceByRelation(int $walletId, int|float $balance , string $type): int
+    public function decrementBalanceByRelation(int $walletId, int|float $balance, string $type): int
     {
 
         return app()
@@ -157,11 +158,11 @@ trait WalletTrait
     }
 
 
-    public function findWalletExtensionByWalletId(int $walletId,string $extensionType): ?Model
+    public function findWalletExtensionByWalletId(int $walletId, string $extensionType): ?Model
     {
-          return  app()
-              ->make(WalletExtensionRepositoryInterface::class)
-              ->findWalletExtensionByWalletId($walletId, $extensionType);
+        return app()
+            ->make(WalletExtensionRepositoryInterface::class)
+            ->findWalletExtensionByWalletId($walletId, $extensionType);
     }
 
     public function checkWalletExtensionBalance(int $walletId, float $balance, string $extensionType): bool
@@ -169,5 +170,17 @@ trait WalletTrait
         return app()
             ->make(WalletExtensionRepositoryInterface::class)
             ->checkWalletExtensionBalance($walletId, $balance, $extensionType);
+    }
+
+    /**
+     * @param int $userId
+     * @return Model
+     * @throws BindingResolutionException
+     */
+    public function lockForUpdateWallet(int $userId): Model
+    {
+        return app()
+            ->make(WalletRepositoryInterface::class)
+            ->lockForUpdate($userId);
     }
 }

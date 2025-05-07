@@ -150,4 +150,13 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
             ->where('type', $extensionType)
             ->firstOrFail();
     }
+
+    public function lockForUpdate(int $userId)
+    {
+       return $this->model
+           ->query()
+           ->where('user_id',$userId)
+           ->lockForUpdate()
+           ->firstOrFail();
+    }
 }
