@@ -3,14 +3,16 @@
 namespace Database\Factories;
 
 use App\Models\GoldRequest;
+use App\Models\Trade;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Trade>
+ * @extends Factory<Trade>
  */
 class TradeFactory extends Factory
 {
+    protected $model = Trade::class;
     /**
      * Define the model's default state.
      *

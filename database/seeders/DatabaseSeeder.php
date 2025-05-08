@@ -3,12 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Commission;
+use App\Models\GoldRequest;
 use App\Models\Setting;
 use App\Models\User;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Wallet;
-use App\Models\WalletExtension;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -32,5 +31,7 @@ class DatabaseSeeder extends Seeder
             ['key' => 'min_commission', 'value' => '50000'],
             ['key' => 'max_commission', 'value' => '5000000'],
         ]);
+
+        GoldRequest::factory(10)->create();
     }
 }

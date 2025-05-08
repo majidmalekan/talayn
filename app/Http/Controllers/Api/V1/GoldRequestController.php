@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GoldRequest\IndexGoldRequestRequest;
 use App\Http\Requests\GoldRequest\StoreGoldRequestRequest;
 use App\Http\Requests\GoldRequest\UpdateGoldRequestRequest;
 use App\Services\GoldRequestService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class GoldRequestController extends Controller
 {
@@ -17,10 +18,10 @@ class GoldRequestController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param Request $request
+     * @param IndexGoldRequestRequest $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(IndexGoldRequestRequest $request): JsonResponse
     {
         return success('',$this->goldRequestService->index($request));
     }
@@ -34,6 +35,7 @@ class GoldRequestController extends Controller
     {
         try {
             $input = $request->validated();
+            $input["remaining_amount"]=$request->post('amount');
             return success('',$this->goldRequestService->create($input));
         }catch (\Exception $exception){
             return failed($exception->getMessage());
@@ -73,6 +75,6 @@ class GoldRequestController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        return success('',$this->goldRequestService->delete($id));
+        return success('',$this->goldRequestService->update($id,['status'=>StatusEnum::INACTIVE->value]));
     }
 }

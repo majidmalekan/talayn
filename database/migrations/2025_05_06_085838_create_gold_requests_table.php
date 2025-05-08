@@ -21,6 +21,7 @@ return new class extends Migration
                 ->default('active');
             $table->enum('type',['buy','sell']);
             $table->float('amount');
+            $table->float('remaining_amount');
             $table->float('price_fee');
             $table->timestamps();
         });

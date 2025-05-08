@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Trade\StoreTradeRequest;
-use App\Http\Requests\Trade\UpdateTradeRequest;
-use App\Models\GoldRequest;
 use App\Services\GoldRequestService;
 use App\Services\TradeService;
 use App\Traits\WalletTrait;
@@ -46,11 +45,13 @@ class TradeController extends Controller
                 $commission = calculateDynamicCommission($inputs["amount"], $fullPrice);
                 $userDecrementBuyPrice = $fullPrice + $commission;
                 $userIncrementSellPrice = $fullPrice - $commission;
-                $this->lockForUpdateWallet($inputs['seller_ user_id'],$userIncrementSellPrice,$request->post('amount'));
+                $this->lockForUpdateWallet($inputs['seller_user_id'],$userIncrementSellPrice,$request->post('amount'));
                 $this->lockForUpdateWallet($request->user()->id,$userDecrementBuyPrice,$request->post('amount'));
                 $trade=$this->tradeService->create($inputs);
-                $newRemain=$sellOrder->remaining_gram -= $inputs["amount"];
-                $sellOrder->status = $newRemain > 0 ? 'active' : 'completed';
+                $attributes["remaining_amount"]=$sellOrder->remaining_amount - $inputs["amount"];
+                $attributes["status"] = $attributes["remaining_amount"] > 0 ? StatusEnum::ACTIVE->value
+                    : StatusEnum::COMPLETED->value ;
+                $this->updateGoldRequest($request->post('sell_gold_request_id'),$attributes);
                 return success('Trade successfully created',$trade);
             });
         } catch (\Exception $exception) {
@@ -70,6 +71,11 @@ class TradeController extends Controller
 
     protected function getGoldRequest(int $id): ?Model
     {
-        return $this->goldRequestService->show($id);
+        return $this->goldRequestService->find($id);
+    }
+
+    protected function updateGoldRequest(int $id,array $attributes): int
+    {
+        return $this->goldRequestService->update($id,$attributes);
     }
 }

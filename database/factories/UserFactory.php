@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+   protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -29,7 +26,7 @@ class UserFactory extends Factory
             'phone' => fake()->unique()->phoneNumber(),
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => "sS12345@",
         ];
     }
 

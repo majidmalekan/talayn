@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Trade;
 
+use App\Rules\EnsureAmountIsEnoughDueToRemainingAmount;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTradeRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreTradeRequest extends FormRequest
             'sell_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
             "seller_user_id" => ['required', 'integer', 'exists:users,id'],
             'buy_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
-            "amount" => ['required', 'integer', 'min:1'],
+            "amount" => ['required', 'integer', new EnsureAmountIsEnoughDueToRemainingAmount],
         ];
     }
 }

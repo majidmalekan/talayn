@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WalletFactory extends Factory
 {
+    protected $model = Wallet::class;
     /**
      * Define the model's default state.
      *

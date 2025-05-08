@@ -5,25 +5,26 @@ namespace App\Models;
 use App\Enums\GoldRequestTypeEnum;
 use App\Enums\StatusEnum;
 use App\Enums\TradeStatusEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GoldRequest extends BaseModel
 {
+    use HasFactory;
     protected $fillable = [
         "user_id",
         "status",
         "type",
         "amount",
-        "price_fee"
+        "price_fee",
+        "remaining_amount"
     ];
 
     protected $casts = [
         "status" => StatusEnum::class,
         "type" => GoldRequestTypeEnum::class,
     ];
-
-    protected $appends = ["remaining_amount"];
 
     /**
      * @return BelongsTo
@@ -43,13 +44,4 @@ class GoldRequest extends BaseModel
         return $this->hasMany(Trade::class, 'sell_gold_request_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getRemainingAmountAttribute(): int
-    {
-        return $this->amount - $this->sellTrades()
-                ->where('status', TradeStatusEnum::COMPLETED->value)
-                ->sum('amount');
-    }
 }
