@@ -187,3 +187,16 @@ if (!function_exists('calculateDynamicCommission')) {
         return (int)round(max($min, min($commission, $max)));
     }
 }
+if (!function_exists('convertRialToToman')) {
+    function convertRialToToman(float $price): float
+    {
+        return $price / 10;
+    }
+}
+
+if (!function_exists('convertTomanToRial')) {
+    function convertRialToToman(float $price): float
+    {
+        return $price * 10;
+    }
+}
