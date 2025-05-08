@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Commission;
 use App\Models\GoldRequest;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

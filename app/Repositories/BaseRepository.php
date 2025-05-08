@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Enums\UserRoleEnum;
 use App\Traits\CacheRepositoryTrait;
 use App\Traits\DBTransactionLockedTrait;
 use App\Traits\TableInformationTrait;
@@ -14,7 +13,7 @@ use Illuminate\Http\Request;
 
 class BaseRepository implements BaseEloquentRepositoryInterface
 {
-    use TableInformationTrait, DBTransactionLockedTrait,CacheRepositoryTrait;
+    use TableInformationTrait, DBTransactionLockedTrait, CacheRepositoryTrait;
 
     /**
      * @var Model
@@ -52,9 +51,9 @@ class BaseRepository implements BaseEloquentRepositoryInterface
      */
     public function find(int $id): ?Model
     {
-            return $this->model
-                ->query()
-                ->findOrFail($id);
+        return $this->model
+            ->query()
+            ->findOrFail($id);
     }
 
 
@@ -89,29 +88,14 @@ class BaseRepository implements BaseEloquentRepositoryInterface
      */
     public function index(Request $request, int $perPage): LengthAwarePaginator
     {
-                return $this->model->query()
-                    ->when($request->user(), function ($query) use ($request) {
-                        $query->when($request->user()->role==UserRoleEnum::User()->value, function ($query) use ($request) {
-                            $query->where('user_id', $request->user()->id);
-                        });
-                    })
-                    ->when($request->has('filter'), function ($query) use ($request) {
-                        $query->where($request->input('filter'), '=', $request->get('filter_value'));
-                    })
-                    ->orderBy($request->get('sort', 'id'), $request->get('direction', 'DESC'))
-                    ->paginate($perPage, '*', '', $request->get('page', 1));
-    }
-
-    /**
-     * @param int $id
-     * @return Model|null
-     */
-    public function show(int $id): ?Model
-    {
-            return $this->model
-                ->query()
-                ->where('id', $id)
-                ->firstOrFail();
+        return $this->model->query()
+            ->when($request->user(), function ($query) use ($request) {
+                $query->when($request->user()->is_admin, function ($query) use ($request) {
+                    $query->where('user_id', $request->user()->id);
+                });
+            })
+            ->orderBy($request->get('sort', 'id'), $request->get('direction', 'DESC'))
+            ->paginate($perPage, '*', '', $request->get('page', 1));
     }
 
     /**
@@ -129,48 +113,12 @@ class BaseRepository implements BaseEloquentRepositoryInterface
 
     public function getAll(string|int $queryParam = null): array|Collection
     {
-            return $this->model->query()
-                ->when(auth()->check(), function ($query) {
-                    $query->when(request()->user()->role==UserRoleEnum::User()->value, function ($query) {
-                        $query->where('user_id', request()->user()->id);
-                    });
-                })
-                ->get();
-    }
-
-    /**
-     * @param string $attributeName
-     * @param int $attributeId
-     * @return Model|null
-     */
-    public function findByForeignId(string $attributeName, int $attributeId): ?Model
-    {
-        return $this->model
-            ->query()
-            ->where($attributeName . '_id', $attributeId)
-            ->first();
-    }
-
-    /**
-     * @param string $searchKey
-     * @return mixed
-     */
-    public function search(string $searchKey): mixed
-    {
-        return $this->model
-            ->query()
-            ->where('title', 'LIKE', "%" . $searchKey . "%")
-            ->orWhere('description', 'LIKE', "%" . $searchKey . "%")
-            ->orWhere('slug', 'LIKE', "%" . $searchKey . "%")
-            ->orWhereHas('categories', function (Builder $query) use ($searchKey) {
-                $query->where('name', 'LIKE', "%" . $searchKey . "%")
-                    ->orWhere('slug', 'LIKE', "%" . $searchKey . "%");
+        return $this->model->query()
+            ->when(auth()->check(), function ($query) {
+                $query->when(!request()->user()->is_admin, function ($query) {
+                    $query->where('user_id', request()->user()->id);
+                });
             })
-            ->orWhereHas('tags', function (Builder $query) use ($searchKey) {
-                $query->where('name', 'LIKE', "%" . $searchKey . "%")
-                    ->orWhere('slug', 'LIKE', "%" . $searchKey . "%");
-            });
+            ->get();
     }
-
-
 }

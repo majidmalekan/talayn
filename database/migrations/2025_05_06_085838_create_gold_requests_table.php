@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->enum('status', ['active','inactive'])
+            $table->enum('status', ['active','inactive','completed'])
                 ->default('active');
             $table->enum('type',['buy','sell']);
             $table->float('amount');

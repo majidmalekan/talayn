@@ -5,6 +5,7 @@ namespace App\Repositories\Wallet;
 use App\Models\Wallet;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -27,7 +28,7 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
      * @param array $attributes
      * @return Model|null
      */
-    public function firstOrCreate(array $attributes ): ?Model
+    public function firstOrCreate(array $attributes): ?Model
     {
         return $this->model
             ->query()
@@ -59,104 +60,21 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
             ->first();
     }
 
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function incrementBalance(int $walletId, int|float $balance): int
+    public function lockForUpdate(int $userId, $balance, $goldBalance): int
     {
-        $this->clearCache('find', $walletId);
-        $this->clearCache('index');
+        $fieldsToUpdate = $userId == auth('sanctum')->id()
+            ? [
+                'gold_balance' => DB::raw("gold_balance + $goldBalance"),
+                'balance' => DB::raw("balance - $balance")
+            ]
+            : [
+                'gold_balance' => DB::raw("gold_balance - $goldBalance"),
+                'balance' => DB::raw("balance + $balance")
+            ];
         return $this->model
             ->query()
-            ->where('id', $walletId)
-            ->increment('balance', $balance);
-    }
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function decrementBalance(int $walletId, int|float $balance): int
-    {
-        $this->clearCache('find', $walletId);
-        $this->clearCache('index');
-        return $this->model
-            ->query()
-            ->where('id', $walletId)
-            ->decrement('balance', $balance);
-    }
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function decrementBalanceByRelation(int $walletId, int|float $balance , string $type): int
-    {
-
-        $this->clearCache('find', $walletId);
-        $this->clearCache('index');
-        $wallet=$this->show($walletId);
-        return $wallet->walletExtensions()
-            ->newQuery()
-            ->where('wallet_id', $walletId)
-            ->where('type', $type)
-            ->decrement('balance', $balance);
-    }
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function incrementBalanceByRelation(int $walletId, int|float $balance , string $type): int
-    {
-
-        $this->clearCache('find', $walletId);
-        $this->clearCache('index');
-        $wallet=$this->show($walletId);
-        return $wallet->walletExtensions()
-            ->newQuery()
-            ->where('wallet_id', $walletId)
-            ->where('type', $type)
-            ->increment('balance', $balance);
-    }
-
-
-    /**
-     * @param int $walletId
-     * @param string $extensionType
-     * @return Model|null
-     */
-    public function findWalletExtensionByWalletId(int $walletId, string $extensionType) :?Model
-    {
-        $wallet=$this->show($walletId);
-        return $wallet->walletExtensions()
-            ->newQuery()
-            ->where('wallet_id', $walletId)
-            ->where('type', $extensionType)
-            ->firstOrFail();
-    }
-
-    public function lockForUpdate(int $userId)
-    {
-       return $this->model
-           ->query()
-           ->where('user_id',$userId)
-           ->lockForUpdate()
-           ->firstOrFail();
+            ->where('user_id', $userId)
+            ->lockForUpdate()
+            ->update($fieldsToUpdate);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enums\GoldRequestTypeEnum;
 use App\Enums\StatusEnum;
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\TradeStatusEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -23,6 +23,8 @@ class GoldRequest extends BaseModel
         "type" => GoldRequestTypeEnum::class,
     ];
 
+    protected $appends = ["remaining_amount"];
+
     /**
      * @return BelongsTo
      */
@@ -39,5 +41,15 @@ class GoldRequest extends BaseModel
     public function sellTrades(): HasMany
     {
         return $this->hasMany(Trade::class, 'sell_gold_request_id');
+    }
+
+    /**
+     * @return int
+     */
+    public function getRemainingAmountAttribute(): int
+    {
+        return $this->amount - $this->sellTrades()
+                ->where('status', TradeStatusEnum::COMPLETED->value)
+                ->sum('amount');
     }
 }

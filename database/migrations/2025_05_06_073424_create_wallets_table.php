@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('wallet_number')->unique();
             $table->float('balance')->default(0);
+            $table->float('gold_balance')->default(0);
             $table->foreignIdFor(User::class)
                 ->constrained()
                 ->cascadeOnDelete();

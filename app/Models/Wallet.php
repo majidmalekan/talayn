@@ -19,14 +19,6 @@ class Wallet extends BaseModel
       return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return HasOne
-     */
-    public function walletExtension(): HasOne
-    {
-        return $this->hasOne(WalletExtension::class);
-    }
-
     public function getGoldBalanceAttribute():float {
         return $this->walletExtension()
             ->first()

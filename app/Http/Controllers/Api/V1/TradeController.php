@@ -42,26 +42,19 @@ class TradeController extends Controller
             $inputs = $request->validated();
             DB::transaction(function () use ($request, $inputs) {
                 $sellOrder = $this->getGoldRequest($request->post('sell_gold_request_id'));
-                $sellUser = $this->lockForUpdateWallet($inputs['seller_ user_id']);
-                $buyUser = $this->lockForUpdateWallet($request->user()->id);
-                $fullPrice = $inputs["amount"] * $sellOrder->price_per_gram;
+                $fullPrice = $inputs["amount"] * $sellOrder->price_fee;
                 $commission = calculateDynamicCommission($inputs["amount"], $fullPrice);
-                $UserDecrementBuyPrice = $fullPrice + $commission;
+                $userDecrementBuyPrice = $fullPrice + $commission;
                 $userIncrementSellPrice = $fullPrice - $commission;
-                $this->decrementBalanceOfWallet($request->user()->id, $UserDecrementBuyPrice);
-                $this->incrementBalanceByRelation($request->user()->id, $inputs["amount"]);
-                $sellUser->balance += ($fullPrice - $commission);
-                $this->incrementBalanceOfWallet($request->post('seller_ user_id'), $userIncrementSellPrice);
-                $this->decrementBalanceByRelation($request->post('seller_ user_id'),$inputs['amount']);
-                $sellUser->balance_gram -= $inputs["amount"];
-                $buyUser->save();
-                $sellUser->save();
-                $this->tradeService->create($inputs);
-                $sellOrder->remaining_gram -= $inputs["amount"];
-                $sellOrder->status = $sellOrder->remaining_gram > 0 ? 'active' : 'inactive';
+                $this->lockForUpdateWallet($inputs['seller_ user_id'],$userIncrementSellPrice,$request->post('amount'));
+                $this->lockForUpdateWallet($request->user()->id,$userDecrementBuyPrice,$request->post('amount'));
+                $trade=$this->tradeService->create($inputs);
+                $newRemain=$sellOrder->remaining_gram -= $inputs["amount"];
+                $sellOrder->status = $newRemain > 0 ? 'active' : 'completed';
+                return success('Trade successfully created',$trade);
             });
         } catch (\Exception $exception) {
-
+            return failed($exception->getMessage());
         }
     }
 

@@ -19,9 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create()->each(function ($user) {
-            $user->wallet()->save(Wallet::factory()->create()->each(function ($wallet){
-                $wallet->walletExtension()->save(WalletExtension::factory()->create());
-            }));
+            $user->wallet()->save(Wallet::factory()->create());
         });
 
         Commission::query()->insert([

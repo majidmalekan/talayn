@@ -29,42 +29,4 @@ interface WalletRepositoryInterface
      * @return Model|null
      */
     public function findWalletByWalletNumber(int $walletNumber): ?Model;
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @return int
-     */
-    public function incrementBalance(int $walletId, int|float $balance): int;
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @return int
-     */
-    public function decrementBalance(int $walletId, int|float $balance): int;
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     */
-    public function incrementBalanceByRelation(int $walletId, int|float $balance , string $type): int;
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     */
-    public function decrementBalanceByRelation(int $walletId, int|float $balance , string $type): int;
-
-
-    /**
-     * @param int $walletId
-     * @param string $extensionType
-     * @return Model|null
-     */
-    public function findWalletExtensionByWalletId(int $walletId, string $extensionType) :?Model;
 }

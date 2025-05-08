@@ -184,7 +184,6 @@ if (!function_exists('calculateDynamicCommission')) {
         $commission = $totalPrice * ($percent / 100);
         $min = app()->make(CommissionRepositoryInterface::class)->firstByKey('min_commission') ?? 50000;
         $max = app()->make(CommissionRepositoryInterface::class)->firstByKey('max_commission') ?? 5000000;
-
         return (int)round(max($min, min($commission, $max)));
     }
 }

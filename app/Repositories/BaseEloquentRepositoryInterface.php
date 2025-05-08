@@ -56,17 +56,4 @@ interface BaseEloquentRepositoryInterface
      * @return array|Collection
      */
     public function getAll(string|int $queryParam = null): array|Collection;
-
-    /**
-     * @param string $attributeName
-     * @param int $attributeId
-     * @return Model|null
-     */
-    public function findByForeignId(string $attributeName, int $attributeId): ?Model;
-
-    /**
-     * @param string $searchKey
-     * @return mixed
-     */
-    public function search(string $searchKey): mixed;
 }

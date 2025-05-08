@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Crypt;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Models\Wallet;
 use App\Repositories\Wallet\WalletRepositoryInterface;
-use App\Repositories\WalletExtension\WalletExtensionRepositoryInterface;
 
 trait WalletTrait
 {
@@ -78,21 +77,21 @@ trait WalletTrait
     /**
      * @throws BindingResolutionException
      */
-    public function decrementBalanceOfWallet(int $walletId, int|float $balance)
+    public function decrementBalanceOfWallet(int $walletId, int|float $balance, float $goldAmount)
     {
         return app()
             ->make(WalletRepositoryInterface::class)
-            ->decrementBalance($walletId, $balance);
+            ->decrementBalance($walletId, $balance, $goldAmount);
     }
 
     /**
      * @throws BindingResolutionException
      */
-    public function incrementBalanceOfWallet(int $walletId, int|float $balance)
+    public function incrementBalanceOfWallet(int $walletId, int|float $balance, float $goldAmount)
     {
         return app()
             ->make(WalletRepositoryInterface::class)
-            ->incrementBalance($walletId, $balance);
+            ->incrementBalance($walletId, $balance, $goldAmount);
     }
 
     /**
@@ -114,37 +113,6 @@ trait WalletTrait
         return $wallet;
     }
 
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     * @throws BindingResolutionException
-     */
-    public function incrementBalanceByRelation(int $walletId, int|float $balance, string $type): int
-    {
-        return app()
-            ->make(WalletExtensionRepositoryInterface::class)
-            ->incrementBalanceByRelation($walletId, $balance, $type);
-
-    }
-
-    /**
-     * @param int $walletId
-     * @param int|float $balance
-     * @param string $type
-     * @return int
-     * @throws BindingResolutionException
-     */
-    public function decrementBalanceByRelation(int $walletId, int|float $balance, string $type): int
-    {
-
-        return app()
-            ->make(WalletExtensionRepositoryInterface::class)
-            ->decrementBalanceByRelation($walletId, $balance, $type);
-    }
-
     /**
      * @param string $walletNumber
      * @return mixed
@@ -157,30 +125,17 @@ trait WalletTrait
             ->checkWalletNumber($walletNumber);
     }
 
-
-    public function findWalletExtensionByWalletId(int $walletId, string $extensionType): ?Model
-    {
-        return app()
-            ->make(WalletExtensionRepositoryInterface::class)
-            ->findWalletExtensionByWalletId($walletId, $extensionType);
-    }
-
-    public function checkWalletExtensionBalance(int $walletId, float $balance, string $extensionType): bool
-    {
-        return app()
-            ->make(WalletExtensionRepositoryInterface::class)
-            ->checkWalletExtensionBalance($walletId, $balance, $extensionType);
-    }
-
     /**
      * @param int $userId
+     * @param float|int $balance
+     * @param float|int $goldBalance
      * @return Model
      * @throws BindingResolutionException
      */
-    public function lockForUpdateWallet(int $userId): Model
+    public function lockForUpdateWallet(int $userId,float|int $balance,float|int $goldBalance): Model
     {
         return app()
             ->make(WalletRepositoryInterface::class)
-            ->lockForUpdate($userId);
+            ->lockForUpdate($userId,$balance,$goldBalance);
     }
 }

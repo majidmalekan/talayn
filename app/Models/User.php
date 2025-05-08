@@ -49,6 +49,7 @@ class User extends BaseModel implements AuthorizableContract, AuthenticatableCon
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -57,7 +58,7 @@ class User extends BaseModel implements AuthorizableContract, AuthenticatableCon
         return $this->hasOne(Wallet::class);
     }
 
-    public function goldRequest(): HasMany
+    public function goldRequests(): HasMany
     {
         return $this->hasMany(GoldRequest::class);
     }
