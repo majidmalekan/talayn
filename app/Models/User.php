@@ -11,11 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends BaseModel implements AuthorizableContract, AuthenticatableContract
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable,Authorizable,Authenticatable;
+    use HasFactory, Notifiable,Authorizable,Authenticatable,HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
