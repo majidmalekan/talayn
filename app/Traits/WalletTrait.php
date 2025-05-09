@@ -107,10 +107,10 @@ trait WalletTrait
      * @param int $userId
      * @param float|int $balance
      * @param float|int $goldBalance
-     * @return Model
+     * @return int|null
      * @throws BindingResolutionException
      */
-    public function lockForUpdateWallet(int $userId,float|int $balance,float|int $goldBalance): Model
+    public function lockForUpdateWallet(int $userId,float|int $balance,float|int $goldBalance): ?int
     {
         return app()
             ->make(WalletRepositoryInterface::class)

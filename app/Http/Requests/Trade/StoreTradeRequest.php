@@ -27,7 +27,7 @@ class StoreTradeRequest extends FormRequest
             'sell_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
             "seller_user_id" => ['required', 'integer', 'exists:users,id'],
             'buy_gold_request_id' => ['required', 'integer', 'exists:gold_requests,id'],
-            "amount" => ['required', 'integer', new EnsureAmountIsEnoughDueToRemainingAmount],
+            "amount" => ['required', 'numeric', new EnsureAmountIsEnoughDueToRemainingAmount],
         ];
     }
 }

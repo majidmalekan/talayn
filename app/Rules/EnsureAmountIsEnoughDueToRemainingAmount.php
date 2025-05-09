@@ -12,11 +12,13 @@ class EnsureAmountIsEnoughDueToRemainingAmount implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string=): PotentiallyTranslatedString  $fail
+     * @param \Closure(string, ?string=): PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($value > app()->make(GoldRequestRepositoryInterface::class)->find(request()->post('sell_gold_request_id'))?->remaining_amount) {
+        if ($value > app()
+                ->make(GoldRequestRepositoryInterface::class)
+                ->find(request()->post('sell_gold_request_id'))?->remaining_amount) {
             $fail('مقدار بافی مانده طلای کاربر از خرید شما کمتر است.');
         }
     }

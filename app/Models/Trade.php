@@ -16,7 +16,7 @@ class Trade extends BaseModel
         "price_fee",
         "total_price",
         "status",
-        "commission_id",
+        "commission",
     ];
     public array $defaultRelationsForFind=["buyGoldRequest","sellGoldRequest"];
 
@@ -32,10 +32,5 @@ class Trade extends BaseModel
     public function sellGoldRequest(): BelongsTo
     {
         return $this->belongsTo(GoldRequest::class, 'sell_gold_request_id');
-    }
-
-    public function commission(): BelongsTo
-    {
-        return $this->belongsTo(Commission::class, 'commission_id');
     }
 }

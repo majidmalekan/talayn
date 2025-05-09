@@ -1,6 +1,7 @@
 <?php
 
 use App\Repositories\Commission\CommissionRepositoryInterface;
+use App\Repositories\Setting\SettingRepositoryInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Morilog\Jalali\CalendarUtils;
@@ -179,11 +180,11 @@ if (!function_exists('calculateDynamicCommission')) {
      */
     function calculateDynamicCommission($amountGram, $totalPrice): int
     {
-        $commissionRule = app()->make(CommissionRepositoryInterface::class)->firstByRule();
+        $commissionRule = app()->make(CommissionRepositoryInterface::class)->firstByRule($amountGram);
         $percent = $commissionRule ? $commissionRule->percent : 0;
         $commission = $totalPrice * ($percent / 100);
-        $min = app()->make(CommissionRepositoryInterface::class)->firstByKey('min_commission') ?? config('constants.default_min_commission');
-        $max = app()->make(CommissionRepositoryInterface::class)->firstByKey('max_commission') ?? config('constants.default_max_commission');
+        $min = app()->make(SettingRepositoryInterface::class)->firstByKey('min_commission') ?? config('constants.default_min_commission');
+        $max = app()->make(SettingRepositoryInterface::class)->firstByKey('max_commission') ?? config('constants.default_max_commission');
         return (int)round(max($min, min($commission, $max)));
     }
 }
