@@ -26,9 +26,4 @@ class BaseModel extends Model
             ->timezone('Asia/Tehran')
         )->toString();
     }
-
-    protected function hasColumn(): bool
-    {
-        return Schema::hasColumn($this->getTable(), 'status');
-    }
 }

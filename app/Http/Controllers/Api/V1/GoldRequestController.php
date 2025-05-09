@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoldRequest\IndexGoldRequestRequest;
 use App\Http\Requests\GoldRequest\StoreGoldRequestRequest;
 use App\Http\Requests\GoldRequest\UpdateGoldRequestRequest;
+use App\Http\Resources\GoldRequest\GoldRequestCollection;
+use App\Http\Resources\GoldRequest\GoldRequestResource;
 use App\Services\GoldRequestService;
 use Illuminate\Http\JsonResponse;
 
@@ -23,7 +24,7 @@ class GoldRequestController extends Controller
      */
     public function index(IndexGoldRequestRequest $request): JsonResponse
     {
-        return success('',$this->goldRequestService->index($request));
+        return success('',new GoldRequestCollection($this->goldRequestService->index($request)));
     }
 
     /**
@@ -35,9 +36,9 @@ class GoldRequestController extends Controller
     {
         try {
             $input = $request->validated();
-            $input["remaining_amount"]=$request->post('amount');
-            return success('',$this->goldRequestService->create($input));
-        }catch (\Exception $exception){
+            $input["remaining_amount"] = $request->post('amount');
+            return success('', $this->goldRequestService->create($input));
+        } catch (\Exception $exception) {
             return failed($exception->getMessage());
         }
     }
@@ -49,7 +50,7 @@ class GoldRequestController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return success('',$this->goldRequestService->show($id));
+        return success('',new GoldRequestResource($this->goldRequestService->show($id)));
     }
 
     /**
@@ -62,19 +63,9 @@ class GoldRequestController extends Controller
     {
         try {
             $input = $request->validated();
-            return success('',$this->goldRequestService->updateAndFetch($id,$input));
-        }catch (\Exception $exception){
+            return success('',new GoldRequestResource($this->goldRequestService->updateAndFetch($id, $input)));
+        } catch (\Exception $exception) {
             return failed($exception->getMessage());
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function destroy(string $id): JsonResponse
-    {
-        return success('',$this->goldRequestService->update($id,['status'=>StatusEnum::INACTIVE->value]));
     }
 }

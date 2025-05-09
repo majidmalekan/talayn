@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Setting::query()->insert([
-            ['key' => 'min_commission', 'value' => '50000'],
-            ['key' => 'max_commission', 'value' => '5000000'],
+            ['key' => 'min_commission', 'value' => '500000'],
+            ['key' => 'max_commission', 'value' => '50000000'],
         ]);
 
         GoldRequest::factory(10)->create();

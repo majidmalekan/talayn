@@ -25,7 +25,7 @@ class GoldRequestResource extends JsonResource
             "type" => $this->type,
             "type_label" => GoldRequestTypeEnum::{strtoupper($this->type)}->label(),
             "amount" => $this->amount,
-            "price_fee" => $this->price_fee,
+            "price_fee" => convertRialToToman($this->price_fee),
             "created_at" => $this->created_at,
         ];
     }

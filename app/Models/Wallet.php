@@ -10,19 +10,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Wallet extends BaseModel
 {
     use HasFactory;
-    protected $fillable = ["user_id", "balance", "wallet_number"];
-
-    protected $appends = ["gold_balance"];
+    protected $fillable = ["user_id", "balance", "wallet_number","gold_balance"];
 
     public function user(): BelongsTo
     {
       return $this->belongsTo(User::class);
     }
-
-    public function getGoldBalanceAttribute():float {
-        return $this->walletExtension()
-            ->first()
-            ->balance;
-    }
-
 }

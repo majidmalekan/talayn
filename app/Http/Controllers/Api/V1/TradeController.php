@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Trade\StoreTradeRequest;
+use App\Http\Resources\Trade\TradeCollection;
+use App\Http\Resources\Trade\TradeResource;
 use App\Services\GoldRequestService;
 use App\Services\TradeService;
 use App\Traits\WalletTrait;
@@ -28,7 +30,7 @@ class TradeController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        return success('', $this->tradeService->index($request));
+        return success('',new TradeCollection($this->tradeService->index($request)));
     }
 
     /**
@@ -66,7 +68,7 @@ class TradeController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return success('', $this->tradeService->show($id));
+        return success('',new TradeResource($this->tradeService->show($id)));
     }
 
     protected function getGoldRequest(int $id): ?Model

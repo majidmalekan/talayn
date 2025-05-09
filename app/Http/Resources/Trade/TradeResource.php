@@ -19,9 +19,9 @@ class TradeResource extends JsonResource
         return [
             'id'=>$this->id,
             "amount"=>$this->amount,
-            "price_fee"=>$this->price_fee,
-            "total_price"=>$this->total_price,
-            "commission"=>$this->commission,
+            "price_fee"=>convertRialToToman($this->price_fee),
+            "total_price"=>convertRialToToman($this->total_price),
+            "commission"=>convertRialToToman($this->commission),
             "status"=>$this->status,
             "buyGoldRequest"=>new GoldRequestResource($this->whenLoaded('buyGoldRequest')),
             "sellGoldRequest"=>new GoldRequestResource($this->whenLoaded('sellGoldRequest')),
