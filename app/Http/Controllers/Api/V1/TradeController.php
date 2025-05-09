@@ -36,8 +36,10 @@ class TradeController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @param StoreTradeRequest $request
+     * @return JsonResponse
      */
-    public function store(StoreTradeRequest $request)
+    public function store(StoreTradeRequest $request): JsonResponse
     {
         try {
 
