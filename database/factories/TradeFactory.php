@@ -21,7 +21,6 @@ class TradeFactory extends Factory
      */
     public function definition(): array
     {
-        // پیدا کردن یا ساختن درخواست خرید و فروش
         $buyer = GoldRequest::factory()->create(['type' => 'buy']);
         $seller = GoldRequest::factory()->create(['type' => 'sell', 'price_fee' => $buyer->price_fee]);
 

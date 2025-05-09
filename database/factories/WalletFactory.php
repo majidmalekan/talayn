@@ -21,6 +21,7 @@ class WalletFactory extends Factory
         return [
             "wallet_number" => $this->faker->unique()->randomNumber(16),
             "balance" => $this->faker->randomFloat(2, 0, 10000000000),
+            "gold_balance" => $this->faker->randomFloat(2, 0, 10000000000),
         ];
     }
 }

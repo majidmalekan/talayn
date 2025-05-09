@@ -19,7 +19,8 @@ class CommissionRepository extends BaseRepository implements CommissionRepositor
      */
     public function firstByRule(float $amountGram): ?Model
     {
-        return $this->model->query()->where('from_gram', '<=', $amountGram)
+        return $this->model->query()
+            ->where('from_gram', '<=', $amountGram)
             ->where(function ($q) use ($amountGram) {
                 $q->where('to_gram', '>=', $amountGram)->orWhereNull('to_gram');
             })

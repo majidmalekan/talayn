@@ -32,7 +32,7 @@ trait WalletTrait
     {
         return app()
             ->make(WalletRepositoryInterface::class)
-            ->findWalletByWalletNumber(Crypt::encryptString($walletNumber));
+            ->findWalletByWalletNumber($walletNumber);
     }
 
     /**
@@ -49,49 +49,28 @@ trait WalletTrait
         if (!$user) {
             return null;
         }
-
         return $this->getWalletByUserId($user->id);
     }
 
     /**
      * @throws BindingResolutionException
      */
-    protected function getWallet(string $mixed, string $type = 'transaction'): ?Model
+    protected function getWallet(string $mixed): ?Model
     {
         /* @var Wallet $wallet */
         $wallet = $this->getWalletByWalletNumber($mixed);
         if ($wallet) {
             return $wallet;
         }
-        $wallet = $this->getWalletByUserId($mixed, $type);
+        $wallet = $this->getWalletByUserId($mixed);
         if ($wallet) {
             return $wallet;
         }
-        $wallet = $this->getWalletByPhoneNumber($mixed, $type);
+        $wallet = $this->getWalletByPhoneNumber($mixed);
         if ($wallet) {
             return $wallet;
         }
         return null;
-    }
-
-    /**
-     * @throws BindingResolutionException
-     */
-    public function decrementBalanceOfWallet(int $walletId, int|float $balance, float $goldAmount)
-    {
-        return app()
-            ->make(WalletRepositoryInterface::class)
-            ->decrementBalance($walletId, $balance, $goldAmount);
-    }
-
-    /**
-     * @throws BindingResolutionException
-     */
-    public function incrementBalanceOfWallet(int $walletId, int|float $balance, float $goldAmount)
-    {
-        return app()
-            ->make(WalletRepositoryInterface::class)
-            ->incrementBalance($walletId, $balance, $goldAmount);
     }
 
     /**
@@ -107,10 +86,9 @@ trait WalletTrait
         while ($this->checkWalletNumberForUniqueness($inputs["wallet_number"])) {
             $inputs["wallet_number"] = (generate_otp(16));
         }
-        $wallet = app()
+        return app()
             ->make(WalletRepositoryInterface::class)
             ->firstOrCreate($inputs);
-        return $wallet;
     }
 
     /**

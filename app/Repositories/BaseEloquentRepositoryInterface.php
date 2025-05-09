@@ -50,10 +50,4 @@ interface BaseEloquentRepositoryInterface
      * @return Model|null
      */
     public function updateAndFetch(int $id, array $attributes): ?Model;
-
-    /**
-     * @param string|int|null $queryParam
-     * @return array|Collection
-     */
-    public function getAll(string|int $queryParam = null): array|Collection;
 }
