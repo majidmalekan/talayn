@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create()->each(function ($user) {
-            $user->wallet()->save(Wallet::factory()->create());
-        });
+        User::factory(10)
+            ->has(Wallet::factory())
+            ->create();
 
         Commission::query()->insert([
             ['from_gram' => 0, 'to_gram' => 1, 'percent' => 2],

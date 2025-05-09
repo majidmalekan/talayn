@@ -29,7 +29,7 @@ class User extends BaseModel implements AuthorizableContract, AuthenticatableCon
         'phone',
         'password',
     ];
-
+    public array $defaultRelationsForFind=["wallet"];
     /**
      * The attributes that should be hidden for serialization.
      *

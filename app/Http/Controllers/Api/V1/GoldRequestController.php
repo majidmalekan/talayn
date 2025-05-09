@@ -37,6 +37,8 @@ class GoldRequestController extends Controller
         try {
             $input = $request->validated();
             $input["remaining_amount"] = $request->post('amount');
+            $input["user_id"] = $request->user()->id;
+            $input["price_fee"]=convertTomanToRial($input["price_fee"]);
             return success('', $this->goldRequestService->create($input));
         } catch (\Exception $exception) {
             return failed($exception->getMessage());
@@ -50,7 +52,11 @@ class GoldRequestController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return success('',new GoldRequestResource($this->goldRequestService->show($id)));
+        try {
+            return success('',new GoldRequestResource($this->goldRequestService->find($id,['user_id'=>auth('sanctum')->id()])));
+        }catch (\Exception $exception){
+            return failed($exception->getMessage(),$exception->getCode());
+        }
     }
 
     /**
@@ -62,10 +68,10 @@ class GoldRequestController extends Controller
     public function update(UpdateGoldRequestRequest $request, string $id): JsonResponse
     {
         try {
-            $input = $request->validated();
-            return success('',new GoldRequestResource($this->goldRequestService->updateAndFetch($id, $input)));
+            $inputs = $request->validated();
+            return success('',new GoldRequestResource($this->goldRequestService->updateAndFetch($id, $inputs,['user_id'=>auth('sanctum')->id()])));
         } catch (\Exception $exception) {
-            return failed($exception->getMessage());
+            return failed($exception->getMessage(),$exception->getCode());
         }
     }
 }

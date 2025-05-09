@@ -21,6 +21,7 @@ class GoldRequest extends BaseModel
         "remaining_amount"
     ];
 
+    public array $defaultRelationsForFind=["user"];
     protected $casts = [
         "status" => StatusEnum::class,
         "type" => GoldRequestTypeEnum::class,

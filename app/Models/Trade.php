@@ -18,6 +18,7 @@ class Trade extends BaseModel
         "status",
         "commission_id",
     ];
+    public array $defaultRelationsForFind=["buyGoldRequest","sellGoldRequest"];
 
     protected $casts = [
         "status" => TradeStatusEnum::class,

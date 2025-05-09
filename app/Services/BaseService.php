@@ -43,33 +43,42 @@ class BaseService
     /**
      * @param int $id
      * @param array $attributes
+     * @param array|null $whereAttributes
      * @return bool
      */
-    public function update(int $id, array $attributes): bool
+    public function update(int $id, array $attributes,array $whereAttributes=null): bool
     {
-        return $this->repository->update($id, $attributes);
+        return $this->repository->update($id, $attributes,$whereAttributes);
     }
 
     /**
      * @param int $id
      * @param array $attributes
+     * @param array|null $whereAttributes
      * @return Model|null
+     * @throws \Exception
      */
-    public function updateAndFetch(int $id, array $attributes): ?Model
+    public function updateAndFetch(int $id, array $attributes,array $whereAttributes=null): ?Model
     {
-        if ($this->update($id, $attributes)) {
+        if ($this->update($id, $attributes,$whereAttributes)) {
             return $this->find($id);
         }
-        return null;
+        throw new \Exception('forbidden',403);
     }
 
     /**
      * @param int $id
+     * @param array|null $whereAttributes
      * @return Model|null
+     * @throws \Exception
      */
-    public function find(int $id): ?Model
+    public function find(int $id,array $whereAttributes=null): ?Model
     {
-        return $this->repository->find($id);
+        try {
+            return $this->repository->find($id,$whereAttributes);
+        }catch (\Exception $exception){
+            throw new \Exception('forbidden',403);
+        }
     }
 
     /**
@@ -83,11 +92,18 @@ class BaseService
 
     /**
      * @param int $id
+     * @param array|null $whereAttributes
      * @return bool
+     * @throws \Exception
      */
-    public function delete(int $id): bool
+    public function delete(int $id,array $whereAttributes=null): bool
     {
-        return $this->repository->delete($id);
+        try {
+            return $this->repository->delete($id,$whereAttributes);
+
+        }catch (\Exception $exception){
+            throw new \Exception('forbidden',403);
+        }
     }
 
 
@@ -100,26 +116,4 @@ class BaseService
         $perPage = $this->getPerPage((int)$request->query('perPage', $this->perPageLimit));
         return $this->repository->index($request, $perPage);
     }
-
-    /**
-     * @param int $id
-     * @return Model|null
-     */
-    public function show(int $id): ?Model
-    {
-        return $this->repository->show($id);
-    }
-
-    /**
-     * @param string|int|null $queryParam
-     * @return mixed
-     */
-    public function getAll(string|int $queryParam = null): mixed
-    {
-        return $this->repository->getAll($queryParam);
-    }
-
-
-
-
 }

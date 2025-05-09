@@ -7,7 +7,6 @@ use App\Traits\CacheRepositoryTrait;
 use App\Traits\DBTransactionLockedTrait;
 use App\Traits\TableInformationTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -64,8 +63,9 @@ class BaseRepository implements BaseEloquentRepositoryInterface
         return $this->cache->remember($this->getTableName() . '_find_' . (auth('sanctum')->check() ?
                 request()->user('sanctum')->id . $id : $id), env('CACHE_EXPIRE_TIME'),
             function () use ($id, $whereAttributes) {
-                $this->model
+               return $this->model
                     ->query()
+                    ->with($this->model->defaultRelationsForFind)
                     ->where('id', $id)
                     ->when($whereAttributes != null, function ($query) use ($whereAttributes) {
                         $query->where($whereAttributes);
@@ -117,7 +117,7 @@ class BaseRepository implements BaseEloquentRepositoryInterface
             $this->getTableName() . '_index_' . ($request->user() ? $request->user()->id : '') . $request->get('page', 1),
             env('CACHE_EXPIRE_TIME'),
             function () use ($request, $perPage) {
-                $this->model->query()
+               return $this->model->query()
                     ->when($request->user(), function ($query) use ($request) {
                         $query->when($request->user()->is_admin, function ($query) use ($request) {
                             $query->where('user_id', $request->user()->id);

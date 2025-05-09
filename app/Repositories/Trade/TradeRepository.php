@@ -21,7 +21,7 @@ class TradeRepository extends BaseRepository implements TradeRepositoryInterface
             $this->getTableName() . '_index_' . ($request->user() ? $request->user()->id : '') . $request->get('page', 1),
             env('CACHE_EXPIRE_TIME'),
             function () use ($request, $perPage) {
-                $this->model->query()
+                return $this->model->query()
                     ->when($request->user(), function ($query) use ($request) {
                         $query->when(!$request->user()->is_admin, function (Builder $query) use ($request) {
                             $query->whereHas('buyGoldRequest', function ($query) use ($request) {

@@ -57,7 +57,7 @@ class TradeController extends Controller
                 return success('Trade successfully created',$trade);
             });
         } catch (\Exception $exception) {
-            return failed($exception->getMessage());
+            return failed($exception->getMessage(),$exception->getCode());
         }
     }
 
@@ -68,7 +68,11 @@ class TradeController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return success('',new TradeResource($this->tradeService->show($id)));
+        try {
+            return success('',new TradeResource($this->tradeService->find($id,['user_id'=>auth('sanctum')->id()])));
+        }catch (\Exception $exception){
+            return failed($exception->getMessage(),$exception->getCode());
+        }
     }
 
     protected function getGoldRequest(int $id): ?Model

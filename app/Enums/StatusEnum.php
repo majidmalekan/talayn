@@ -12,7 +12,7 @@ enum StatusEnum : string
         return match ($this){
             self::ACTIVE => __('Active'),
             self::INACTIVE => __('Inactive'),
-            self::Completed => __('Completed'),
+            self::COMPLETED => __('Completed'),
         };
     }
 }

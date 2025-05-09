@@ -195,7 +195,7 @@ if (!function_exists('convertRialToToman')) {
 }
 
 if (!function_exists('convertTomanToRial')) {
-    function convertRialToToman(float $price): float
+    function convertTomanToRial(float $price): float
     {
         return $price * 10;
     }

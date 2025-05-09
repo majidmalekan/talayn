@@ -10,6 +10,7 @@ use App\Traits\WalletTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Yaml\Yaml;
 
 class AuthController extends Controller
 {
@@ -59,5 +60,14 @@ class AuthController extends Controller
         }
         $inputs['password'] = $request->post('password');
         return $inputs;
+    }
+
+    public function yamlConvertor(): JsonResponse
+    {
+        $yamlFilePath = resource_path('swagger/openapi.yaml');
+        $yaml = Yaml::parse(file_get_contents($yamlFilePath));
+        $json = json_encode($yaml, JSON_PRETTY_PRINT);
+        file_put_contents(storage_path('api-docs/api-docs.json'), $json);
+        return success('your api docs has been converted');
     }
 }
