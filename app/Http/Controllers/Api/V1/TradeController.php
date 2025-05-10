@@ -35,20 +35,6 @@ class TradeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param StoreTradeRequest $request
-     * @return JsonResponse
-     */
-    public function store(StoreTradeRequest $request): JsonResponse
-    {
-        try {
-            return success('Trade successfully created', $trade);
-        } catch (\Exception $exception) {
-            return failed($exception->getMessage());
-        }
-    }
-
-    /**
      * Display the specified resource.
      * @param string $id
      * @return JsonResponse

@@ -29,4 +29,14 @@ interface WalletRepositoryInterface
      * @return Model|null
      */
     public function findWalletByWalletNumber(int $walletNumber): ?Model;
+
+    /**
+     * @param int $userId
+     * @param float $balance
+     * @param float $goldBalance
+     * @param bool $isBuyer
+     * @return int
+     */
+    public function lockForUpdate(int $userId, float $balance, float $goldBalance, bool $isBuyer): int;
+
 }

@@ -3,8 +3,6 @@
 namespace App\Rules;
 
 use App\Enums\GoldRequestTypeEnum;
-use App\Models\Wallet;
-use App\Repositories\Wallet\WalletRepositoryInterface;
 use App\Traits\WalletTrait;
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;

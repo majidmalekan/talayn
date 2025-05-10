@@ -8,7 +8,6 @@ use App\Models\GoldRequest;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -51,14 +50,14 @@ class GoldRequestRepository extends BaseRepository implements GoldRequestReposit
      * @param array $attributes
      * @return Collection
      */
-    public function findMatchingBuyGoldRequest(array $attributes): Collection
+    public function findMatchingGoldRequests(array $attributes): Collection
     {
         return $this->model->query()
             ->when($attributes["type"] == GoldRequestTypeEnum::SELL->value, function ($query) use ($attributes) {
                 $query->where('remaining_amount', '<=', $attributes['remaining_amount'])
                     ->where('type', GoldRequestTypeEnum::BUY->value);
 
-            })->when($attributes["type"] = GoldRequestTypeEnum::BUY->value, function ($query) use ($attributes) {
+            })->when($attributes["type"] == GoldRequestTypeEnum::BUY->value, function ($query) use ($attributes) {
                 $query->where('remaining_amount', '>=', $attributes['remaining_amount'])
                     ->where('type', GoldRequestTypeEnum::SELL->value)
                     ->join('wallets', 'wallets.user_id', '=', 'gold_requests.user_id')

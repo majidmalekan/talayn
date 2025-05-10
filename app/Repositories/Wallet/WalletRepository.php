@@ -6,8 +6,6 @@ use App\Models\Wallet;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class WalletRepository extends BaseRepository implements WalletRepositoryInterface
 {
@@ -60,9 +58,9 @@ class WalletRepository extends BaseRepository implements WalletRepositoryInterfa
             ->first();
     }
 
-    public function lockForUpdate(int $userId, $balance, $goldBalance): int
+    public function lockForUpdate(int $userId,float $balance,float $goldBalance,bool $isBuyer): int
     {
-        $fieldsToUpdate = $userId == auth('sanctum')->id()
+        $fieldsToUpdate = $isBuyer
             ? [
                 'gold_balance' => DB::raw("gold_balance + $goldBalance"),
                 'balance' => DB::raw("balance - $balance")

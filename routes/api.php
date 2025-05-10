@@ -11,6 +11,6 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('gold-requests', GoldRequestController::class);
-        Route::apiResource('trades', TradeController::class);
+        Route::apiResource('trades', TradeController::class)->only(['index', 'show']);
     });
 });

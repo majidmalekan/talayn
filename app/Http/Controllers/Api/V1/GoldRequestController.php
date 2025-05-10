@@ -16,7 +16,8 @@ use Illuminate\Http\JsonResponse;
 
 class GoldRequestController extends Controller
 {
-    use TradeTrait,WalletTrait;
+    use TradeTrait, WalletTrait;
+
     public function __construct(protected GoldRequestService $goldRequestService)
     {
     }
@@ -28,7 +29,7 @@ class GoldRequestController extends Controller
      */
     public function index(IndexGoldRequestRequest $request): JsonResponse
     {
-        return success('',new GoldRequestCollection($this->goldRequestService->index($request)));
+        return success('', new GoldRequestCollection($this->goldRequestService->index($request)));
     }
 
     /**
@@ -42,11 +43,11 @@ class GoldRequestController extends Controller
             $input = $request->validated();
             $input["remaining_amount"] = $request->post('amount');
             $input["user_id"] = $request->user()->id;
-            $input["price_fee"]=convertTomanToRial($input["price_fee"]);
-            $goldRequest=$this->goldRequestService->create($input);
-            $GoldRequests=$this->goldRequestService->findMatchingBuyGoldRequest($input);
-            $this->trading($GoldRequests,$goldRequest);
-            return success('', $goldRequest);
+            $input["price_fee"] = convertTomanToRial($input["price_fee"]);
+            $goldRequest = $this->goldRequestService->create($input);
+            $matchingGoldRequests = $this->goldRequestService->findMatchingGoldRequests($input);
+            $trades = $this->trading($matchingGoldRequests, $goldRequest);
+            return success('', $trades);
         } catch (\Exception $exception) {
             return failed($exception->getMessage());
         }
@@ -60,9 +61,9 @@ class GoldRequestController extends Controller
     public function show(string $id): JsonResponse
     {
         try {
-            return success('',new GoldRequestResource($this->goldRequestService->find($id,['user_id'=>auth('sanctum')->id()])));
-        }catch (\Exception $exception){
-            return failed($exception->getMessage(),$exception->getCode());
+            return success('', new GoldRequestResource($this->goldRequestService->find($id, ['user_id' => auth('sanctum')->id()])));
+        } catch (\Exception $exception) {
+            return failed($exception->getMessage(), $exception->getCode());
         }
     }
 
@@ -76,9 +77,9 @@ class GoldRequestController extends Controller
     {
         try {
             $inputs = $request->validated();
-            return success('',new GoldRequestResource($this->goldRequestService->updateAndFetch($id, $inputs,['user_id'=>auth('sanctum')->id()])));
+            return success('', new GoldRequestResource($this->goldRequestService->updateAndFetch($id, $inputs, ['user_id' => auth('sanctum')->id()])));
         } catch (\Exception $exception) {
-            return failed($exception->getMessage(),$exception->getCode());
+            return failed($exception->getMessage(), $exception->getCode());
         }
     }
 }

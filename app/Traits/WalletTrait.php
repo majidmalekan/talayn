@@ -2,12 +2,11 @@
 
 namespace App\Traits;
 
+use App\Models\Wallet;
+use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Wallet\WalletRepositoryInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Crypt;
-use App\Repositories\User\UserRepositoryInterface;
-use App\Models\Wallet;
-use App\Repositories\Wallet\WalletRepositoryInterface;
 
 trait WalletTrait
 {
@@ -107,13 +106,14 @@ trait WalletTrait
      * @param int $userId
      * @param float|int $balance
      * @param float|int $goldBalance
+     * @param bool $isBuyer
      * @return int|null
      * @throws BindingResolutionException
      */
-    public function lockForUpdateWallet(int $userId,float|int $balance,float|int $goldBalance): ?int
+    public function lockForUpdateWallet(int $userId,float|int $balance,float|int $goldBalance,bool $isBuyer): ?int
     {
         return app()
             ->make(WalletRepositoryInterface::class)
-            ->lockForUpdate($userId,$balance,$goldBalance);
+            ->lockForUpdate($userId,$balance,$goldBalance,$isBuyer);
     }
 }
