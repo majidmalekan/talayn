@@ -82,9 +82,9 @@ trait WalletTrait
     {
 
         $inputs["user_id"] = $user->id;
-        $inputs["wallet_number"] = (generate_otp(16));
+        $inputs["wallet_number"] = generateRandom(16);
         while ($this->checkWalletNumberForUniqueness($inputs["wallet_number"])) {
-            $inputs["wallet_number"] = (generate_otp(16));
+            $inputs["wallet_number"] = generateRandom(16);
         }
         return app()
             ->make(WalletRepositoryInterface::class)

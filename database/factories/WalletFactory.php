@@ -35,9 +35,9 @@ class WalletFactory extends Factory
      */
     private function generateUniqueNumber($length = 16): string
     {
-        $number = generate_otp(16);
+        $number = generateRandom(16);
         while ($this->checkWalletNumberForUniqueness($number)) {
-            $number = (generate_otp(16));
+            $number = generateRandom(16);
         }
         return $number;
     }

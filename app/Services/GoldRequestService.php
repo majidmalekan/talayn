@@ -10,4 +10,9 @@ class GoldRequestService extends BaseService
     {
         parent::__construct($repository);
     }
+
+    public function findMatchingBuyGoldRequest(array $attributes)
+    {
+        return $this->repository->findMatchingBuyGoldRequest($attributes);
+    }
 }

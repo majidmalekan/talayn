@@ -42,27 +42,6 @@ class TradeController extends Controller
     public function store(StoreTradeRequest $request): JsonResponse
     {
         try {
-
-            $inputs = $request->validated();
-            $sellOrder = $this->getGoldRequest($request->post('sell_gold_request_id'));
-            $fullPrice = $inputs["amount"] * $sellOrder->price_fee;
-            $commission = calculateDynamicCommission($inputs["amount"], $fullPrice);
-            $userDecrementBuyPrice = $fullPrice + $commission;
-            if ($request->user()->wallet->balance < $userDecrementBuyPrice) {
-                return failed('موجودی شما کمتر از مقدار مورد نیاز برای پرداخت این معامله می باشد.', 403);
-            }
-            $inputs["commission"] = $commission;
-            $inputs["total_price"] = $fullPrice;
-            $inputs["price_fee"] = $sellOrder->price_fee;
-            $inputs["status"] = TradeStatusEnum::COMPLETED->value;
-            $userIncrementSellPrice = $fullPrice - $commission;
-            $trade=DB::transaction(function () use ($request, $inputs, $userIncrementSellPrice, $userDecrementBuyPrice, $sellOrder) {
-                $this->lockForUpdateWallet($inputs['seller_user_id'], $userIncrementSellPrice, $request->post('amount'));
-                $this->lockForUpdateWallet($request->user()->id, $userDecrementBuyPrice, $request->post('amount'));
-                $trade = $this->tradeService->create($inputs);
-                $this->updateGoldRequest($request->post('sell_gold_request_id'),$sellOrder->remaining_amount,$request->post('amount'));
-                return $trade;
-            });
             return success('Trade successfully created', $trade);
         } catch (\Exception $exception) {
             return failed($exception->getMessage());
@@ -81,29 +60,5 @@ class TradeController extends Controller
         } catch (\Exception $exception) {
             return failed($exception->getMessage(), $exception->getCode());
         }
-    }
-
-    /**
-     * @param int $id
-     * @return Model|null
-     * @throws \Exception
-     */
-    protected function getGoldRequest(int $id): ?Model
-    {
-        return $this->goldRequestService->find($id);
-    }
-
-    /**
-     * @param int $id
-     * @param float $remaining_amount
-     * @param float $amount
-     * @return int
-     */
-    protected function updateGoldRequest(int $id, float $remaining_amount,float $amount): int
-    {
-        $attributes["remaining_amount"] = $remaining_amount - $amount;
-        $attributes["status"] = $attributes["remaining_amount"] > 0 ? StatusEnum::ACTIVE->value
-            : StatusEnum::COMPLETED->value;
-        return $this->goldRequestService->update($id, $attributes);
     }
 }
