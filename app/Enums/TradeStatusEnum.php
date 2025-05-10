@@ -11,9 +11,9 @@ enum TradeStatusEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => __('Pending'),
-            self::COMPLETED => __('Completed'),
-            self::CANCELLED => __('Cancelled'),
+            self::PENDING => __('enums.trade_status.Pending'),
+            self::COMPLETED => __('enums.trade_status.Completed'),
+            self::CANCELLED => __('enums.trade_status.Cancelled'),
         };
     }
 }

@@ -10,9 +10,9 @@ enum StatusEnum : string
 
     public function label(): string{
         return match ($this){
-            self::ACTIVE => __('Active'),
-            self::INACTIVE => __('Inactive'),
-            self::COMPLETED => __('Completed'),
+            self::ACTIVE => __('enums.gold_request_status.ACTIVE'),
+            self::INACTIVE => __('enums.gold_request_status.INACTIVE'),
+            self::COMPLETED => __('enums.gold_request_status.COMPLETED'),
         };
     }
 }

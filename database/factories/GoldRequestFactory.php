@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\StatusEnum;
 use App\Models\GoldRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +23,7 @@ class GoldRequestFactory extends Factory
         $amount = $this->faker->randomFloat(3, 0.1, 10);
         return [
             'user_id' => User::query()->inRandomOrder()->first()->id ?? User::factory(),
-            'status' => $this->faker->randomElement(['active', 'inactive', 'completed']),
+            'status' => StatusEnum::ACTIVE->value,
             'type' => $this->faker->randomElement(['buy', 'sell']),
             'amount' => $amount,
             "remaining_amount" =>$amount,

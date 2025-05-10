@@ -10,8 +10,8 @@ enum GoldRequestTypeEnum : string
     public function label(): string
     {
         return match ($this) {
-            self::BUY => __('Buy'),
-            self::SELL => __('Sell'),
+            self::BUY => __('enums.gold_request_type.Buy'),
+            self::SELL => __('enums.gold_request_type.Sell'),
         };
     }
 }
