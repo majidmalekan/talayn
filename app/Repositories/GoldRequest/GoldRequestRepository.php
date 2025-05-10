@@ -20,26 +20,15 @@ class GoldRequestRepository extends BaseRepository implements GoldRequestReposit
 
     public function index(Request $request, int $perPage): LengthAwarePaginator
     {
-        $buyerGoldRequest = null;
-        if ($request->has('buyer_gold_request_id'))
-            $buyerGoldRequest = $this->find($request->query('buyer_gold_request_id'));
         return $this->cache->remember(
             $this->getTableName() . '_index_' . ($request->user() ? $request->user()->id : '') . $request->get('page', 1),
             env('CACHE_EXPIRE_TIME'),
-            function () use ($request, $perPage, $buyerGoldRequest) {
+            function () use ($request, $perPage) {
                 return $this->model->query()
-                    ->when($request->user() && !$request->has('buyer_gold_request_id'), function ($query) use ($request, $buyerGoldRequest) {
+                    ->when($request->user(), function ($query) use ($request) {
                         $query->when(!$request->user()->is_admin, function ($query) use ($request) {
                             $query->where('user_id', $request->user()->id);
                         });
-                    })
-                    ->when($request->has('buyer_gold_request_id'), function (Builder $query) use ($buyerGoldRequest) {
-                        $query->where('price_fee', "<=", $buyerGoldRequest?->price_fee)
-                            ->where('remaining_amount', '>=', $buyerGoldRequest?->amount)
-                            ->where('status', StatusEnum::ACTIVE->value)
-                            ->where('type', GoldRequestTypeEnum::SELL->value)
-                            ->where('user_id', '!=', $buyerGoldRequest->user_id)
-                            ->where('id', '!=', $buyerGoldRequest->id);
                     })
                     ->orderBy($request->get('sort', 'id'), $request->get('direction', 'DESC'))
                     ->paginate($perPage, '*', '', $request->get('page', 1));

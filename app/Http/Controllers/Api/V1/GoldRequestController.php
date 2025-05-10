@@ -9,6 +9,7 @@ use App\Http\Requests\GoldRequest\StoreGoldRequestRequest;
 use App\Http\Requests\GoldRequest\UpdateGoldRequestRequest;
 use App\Http\Resources\GoldRequest\GoldRequestCollection;
 use App\Http\Resources\GoldRequest\GoldRequestResource;
+use App\Jobs\ProcessGoldTradeJob;
 use App\Services\GoldRequestService;
 use App\Traits\TradeTrait;
 use App\Traits\WalletTrait;
@@ -45,9 +46,8 @@ class GoldRequestController extends Controller
             $input["user_id"] = $request->user()->id;
             $input["price_fee"] = convertTomanToRial($input["price_fee"]);
             $goldRequest = $this->goldRequestService->create($input);
-            $matchingGoldRequests = $this->goldRequestService->findMatchingGoldRequests($input);
-            $trades = $this->trading($matchingGoldRequests, $goldRequest);
-            return success('', $trades);
+            dispatch(new ProcessGoldTradeJob($goldRequest,$this->goldRequestService));
+            return success('', $goldRequest);
         } catch (\Exception $exception) {
             return failed($exception->getMessage());
         }
