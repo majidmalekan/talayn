@@ -47,7 +47,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => env('JWT_TTL',180),
+    'type' => env('JWT_TYPE',"Bearer"),
 
     /*
     |--------------------------------------------------------------------------

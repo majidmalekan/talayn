@@ -63,7 +63,7 @@ class BaseService
         if ($this->update($id, $attributes,$whereAttributes)) {
             return $this->find($id);
         }
-        throw new \Exception('forbidden',403);
+        throw new \Exception(__('serverError.model_not_found'),404);
     }
 
     /**
@@ -77,7 +77,7 @@ class BaseService
         try {
             return $this->repository->find($id,$whereAttributes);
         }catch (\Exception $exception){
-            throw new \Exception('forbidden',403);
+            throw new \Exception(__('serverError.model_not_found'),404);
         }
     }
 
@@ -100,9 +100,8 @@ class BaseService
     {
         try {
             return $this->repository->delete($id,$whereAttributes);
-
         }catch (\Exception $exception){
-            throw new \Exception('forbidden',403);
+            throw new \Exception(__('serverError.model_not_found'),404);
         }
     }
 

@@ -61,7 +61,7 @@ class BaseRepository implements BaseEloquentRepositoryInterface
     public function find(int $id,array $whereAttributes=null): ?Model
     {
         return $this->cache->remember($this->getTableName() . '_find_' . (auth('sanctum')->check() ?
-                request()->user('sanctum')->id . $id : $id), env('CACHE_EXPIRE_TIME'),
+                request()->user('sanctum')->id . $id : $id),config('constants.cache_expiration'),
             function () use ($id, $whereAttributes) {
                return $this->model
                     ->query()
@@ -115,7 +115,7 @@ class BaseRepository implements BaseEloquentRepositoryInterface
     {
         return $this->cache->remember(
             $this->getTableName() . '_index_' . ($request->user() ? $request->user()->id : '') . $request->get('page', 1),
-            env('CACHE_EXPIRE_TIME'),
+            config('constants.cache_expiration'),
             function () use ($request, $perPage) {
                return $this->model->query()
                     ->when($request->user(), function ($query) use ($request) {

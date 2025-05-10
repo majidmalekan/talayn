@@ -28,18 +28,18 @@ class AuthController extends Controller
         try {
             $credentials=$this->filterCredentials($request);
             if (!Auth::attempt($credentials)) {
-                return failed('', 401);
+                return failed('auth.failed', 401);
             }
             $newToken = $this->createANewToken($request->post('username'), Auth::user());
             $wallet = $this->createWalletForNewUser(Auth::user());
             return success('', [
                 "access_token" => $newToken,
-                "token_type" => env('JWT_TYPE'),
-                "expire_in" => env('JWT_TTL'),
+                "token_type" => config('sanctum.type'),
+                "expire_in" => config('sanctum.expiration'),
                 'wallet' => $wallet,
             ]);
         } catch (\Exception $exception) {
-            return failed($exception->getMessage());
+            return failed(__('serverError.server_error'));
         }
     }
 
@@ -56,7 +56,7 @@ class AuthController extends Controller
             $inputs=['phone' => $request->post('username')];
         }
         else{
-            throw new \Exception('Invalid username');
+            throw new \Exception(__('auth.failed'));
         }
         $inputs['password'] = $request->post('password');
         return $inputs;
