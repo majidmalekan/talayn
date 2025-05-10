@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\GoldRequestTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GoldRequest\IndexGoldRequestRequest;
 use App\Http\Requests\GoldRequest\StoreGoldRequestRequest;
@@ -11,14 +10,10 @@ use App\Http\Resources\GoldRequest\GoldRequestCollection;
 use App\Http\Resources\GoldRequest\GoldRequestResource;
 use App\Jobs\ProcessGoldTradeJob;
 use App\Services\GoldRequestService;
-use App\Traits\TradeTrait;
-use App\Traits\WalletTrait;
 use Illuminate\Http\JsonResponse;
 
 class GoldRequestController extends Controller
 {
-    use TradeTrait, WalletTrait;
-
     public function __construct(protected GoldRequestService $goldRequestService)
     {
     }

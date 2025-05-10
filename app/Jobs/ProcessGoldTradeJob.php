@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\GoldRequest;
 use App\Services\GoldRequestService;
 use App\Traits\TradeTrait;
+use App\Traits\WalletTrait;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -13,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessGoldTradeJob implements ShouldQueue
 {
-    use TradeTrait,Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TradeTrait,Dispatchable, InteractsWithQueue, Queueable, SerializesModels,WalletTrait;
 
     /**
      * Create a new job instance.
