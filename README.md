@@ -35,7 +35,7 @@ A scalable and secure gold trading API built with Laravel 11, supporting dynamic
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/talayn.git
+git clone https://github.com/majidmalekan/talayn.git
 cd talayn
 ```
 
