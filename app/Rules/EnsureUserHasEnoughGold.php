@@ -24,7 +24,7 @@ class EnsureUserHasEnoughGold implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (request()->post('type') == GoldRequestTypeEnum::SELL->value &&
-            $value < $this->getWalletByUserId(auth('sanctum')->user()->id)->gold_balance) {
+            $value > $this->getWalletByUserId(auth('sanctum')->user()->id)->gold_balance) {
             $fail('مقدار طلای شما کمتر از میزان درخواستی شما برای  فروش می باشد.');
         }
     }

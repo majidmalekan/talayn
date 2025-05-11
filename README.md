@@ -13,6 +13,7 @@ A scalable and secure gold trading API built with Laravel 11, supporting dynamic
 * Atomic (ACID) transactions using `DB::transaction` and `lockForUpdate()`
 * Clean architecture with **Repository & Service Layers**
 * Factory & Seeder support for testing
+* using queue and job for ACID and race condition safe implementation
 * Sanctum-based API token authentication
 * Runs with Laravel Sail (Docker)
 
@@ -34,8 +35,8 @@ A scalable and secure gold trading API built with Laravel 11, supporting dynamic
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/gold-trading-api.git
-cd gold-trading-api
+git clone https://github.com/yourusername/talayn.git
+cd talayn
 ```
 
 ### 2. Install dependencies
@@ -62,13 +63,21 @@ Make sure to set:
 ```
 DB_HOST=mysql
 QUEUE_CONNECTION=redis
-CACHE_DRIVER=redis
+CACHE_STORE=redis
 ```
 
 ### 5. Run migrations and seeders
 
 ```bash
 ./vendor/bin/sail artisan migrate --seed
+```
+
+---
+
+### 6. Run queue and job
+
+```bash
+./vendor/bin/sail artisan queue:work
 ```
 
 ---
@@ -81,7 +90,7 @@ CACHE_DRIVER=redis
 | 1 - 10 g       | 1.5% |
 | 10+ g          | 1%   |
 
-* Minimum: 50,000 Rials
+* Minimum: 500,000 Rials
 * Maximum: 5,000,000 Rials
 
 ---
@@ -115,7 +124,6 @@ Authorization: Bearer {token}
 | Method | Endpoint              | Description        |
 |--------|-----------------------|--------------------|
 | GET    | `/api/v1/trades`      | List user's trades |
-| POST   | `/api/v1/trades`      | Create users trade |
 | GET    | `/api/v1/trades/{id}` | View trade details |
 
 ---
