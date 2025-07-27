@@ -161,4 +161,4 @@ MIT License — Free for personal and commercial use.
 
 ## ✨ Author
 
-Developed with ❤️ by \[Your Name].
+Developed with ❤️ by \ Majid Malekan.
